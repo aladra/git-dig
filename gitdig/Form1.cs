@@ -118,7 +118,7 @@ namespace gitdig
                     }
 
                     byte[] compressed = File.ReadAllBytes(fi.FullName);
-                    byte[] result = Ionic.Zlib.ZlibStream.UncompressBuffer(compressed);
+                    byte[] result = ZlibStream.UncompressBuffer(compressed);
 
                     if (result.Length >= 4)
                     {
@@ -463,12 +463,7 @@ namespace gitdig
             string baseDir = _rootDir.FullName;
             string shaTxt = sha.ToString();
             string readPath = Path.Combine(Path.Combine(baseDir, shaTxt.Substring(0, 2)), shaTxt.Substring(2));
-            byte[] compressed;
-            using (var f = File.OpenRead(readPath))
-            {
-                compressed = File.ReadAllBytes(readPath);
-            }
-
+            byte[] compressed = File.ReadAllBytes(readPath);
 
             if (kill)
             {
@@ -476,7 +471,7 @@ namespace gitdig
                 File.Delete(readPath);
             }
 
-            return Ionic.Zlib.ZlibStream.UncompressBuffer(compressed);
+            return ZlibStream.UncompressBuffer(compressed);
         }
 
         private ShaValue DumpFile(byte[] raw)
@@ -498,7 +493,7 @@ namespace gitdig
 
             using (FileStream fs = File.Create(tmpPath))
             {
-                using (Ionic.Zlib.ZlibStream x = new Ionic.Zlib.ZlibStream(fs, CompressionMode.Compress, (CompressionLevel)1))
+                using (ZlibStream x = new ZlibStream(fs, CompressionMode.Compress, (CompressionLevel)1))
                 {
                     x.Write(raw, 0, raw.Length);
                 }
